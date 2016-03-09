@@ -1,0 +1,13 @@
+[package]
+name = "app_dirs"
+version = "0.0.0"
+authors = ["Andy Barron <AndrewLBarron@gmail.com>"]
+
+description = "Access platform-dependent canonical locations for app-specific data"
+documentation = "https://andybarron.github.io/app-dirs-rs"
+repository = "https://github.com/AndyBarron/app-dirs-rs"
+readme = "README.md"
+keywords = ["application", "data", "storage", "location", "directory"]
+license = "MIT"
+
+[dependencies]
