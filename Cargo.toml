@@ -1,6 +1,6 @@
 [package]
 name = "app_dirs"
-version = "0.0.0"
+version = "0.0.1"
 authors = ["Andy Barron <AndrewLBarron@gmail.com>"]
 
 description = "Access platform-dependent canonical locations for app-specific data"
@@ -11,3 +11,5 @@ keywords = ["application", "data", "storage", "location", "directory"]
 license = "MIT"
 
 [dependencies]
+# TODO conditional dependencies when Rust 1.8.0 is released
+xdg = "^2.0.0"
