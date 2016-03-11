@@ -52,6 +52,8 @@ impl AppDirType {
 
 pub enum AppDirError {
     Io(std::io::Error),
+    // NotFound(PathBuf),
+    NotSupported,
 }
 
 impl From<std::io::Error> for AppDirError {

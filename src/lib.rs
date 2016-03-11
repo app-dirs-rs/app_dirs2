@@ -1,3 +1,4 @@
+#![warn(missing_docs)]
 mod common;
 pub use common::*;
 mod imp;

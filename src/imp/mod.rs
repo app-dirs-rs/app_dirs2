@@ -14,6 +14,6 @@ mod platform {
     pub use self::windows::*;
 }
 
-pub use self::platform::*;
+pub use self::platform::get_app_dir;
 // TODO function to create dir (by calling create_dir_all)
 // TODO helper functions (optionally using AppInfo) to read/write from actual files
