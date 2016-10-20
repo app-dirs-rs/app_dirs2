@@ -14,7 +14,7 @@ mod tests {
         let info = AppInfo::new("Awesome App", "Dedicated Dev");
         let types = [UserConfig, UserData, UserCache, SharedData, SharedConfig];
         for &t in types.iter() {
-            println!("{:?} = {:?}", t, get_app_dir(t, &info))
+            println!("{:?} = {:?}", t, get_app_dir_path(t, &info))
         }
     }
 }
