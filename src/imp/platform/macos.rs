@@ -1,13 +1,13 @@
 use common::*;
-use AppDirType::*;
+use AppDataType::*;
 use std::env::home_dir;
 use std::path::{Component, PathBuf};
 
-pub fn get_app_dir(t: AppDirType) -> AppDirResult<PathBuf> {
-    let dir_base: AppDirResult<PathBuf> = if t.is_shared() {
+pub fn get_app_dir(t: AppDataType) -> AppDirsResult<PathBuf> {
+    let dir_base: AppDirsResult<PathBuf> = if t.is_shared() {
         Ok(Component::RootDir.as_ref().into())
     } else {
-        home_dir().ok_or_else(|| AppDirError::NotSupported)
+        home_dir().ok_or_else(|| AppDirsError::NotSupported)
     };
     dir_base.map(|mut path| {
         match t {
