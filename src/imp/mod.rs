@@ -1,4 +1,5 @@
-use common::{AppDirsError, AppDirsResult, AppDataType, AppInfo};
+use common::{AppDirsError, AppDataType, AppInfo};
+use utils;
 use std::fs;
 use std::path::PathBuf;
 
@@ -18,56 +19,97 @@ mod platform {
     pub use self::windows::*;
 }
 
-/// Creates (if necessary) directory hierarchy for the data type and app info
-/// provided.
+/// Creates (if necessary) and returns path to **app-specific** data
+/// **subdirectory** for provided data type and subdirectory path.
 ///
-/// A result of `Ok` guarantees that the directory located at the returned
-/// `PathBuf` was created, including its full parent hierarchy if required.
+/// The `path` parameter should be a valid relative path separated by
+/// **forward slashes** (`/`).
 ///
-/// Different `AppDataType` variants are NOT GUARANTEED to return different
-/// directories (e.g. on Windows, everything except `UserCache` goes in
-/// `%APPDATA%`).
-pub fn create_app_dir(t: AppDataType, app: &AppInfo) -> AppDirsResult<PathBuf> {
-    get_app_dir_path(t, app).and_then(|path| {
-        match fs::create_dir_all(&path) {
-            Ok(..) => Ok(path),
-            Err(e) => Err(e.into()),
-        }
-    })
+/// If the directory structure does not exist, this function will recursively
+/// create the full hierarchy. Therefore, a result of `Ok` guarantees that the
+/// returned path exists.
+pub fn app_dir(t: AppDataType, app: &AppInfo, path: &str) -> Result<PathBuf, AppDirsError> {
+    let path = try!(get_app_dir(t, app, &path));
+    match fs::create_dir_all(&path) {
+        Ok(..) => Ok(path),
+        Err(e) => Err(e.into()),
+    }
 }
 
-/// Gets directory path for the data type and app info provided.
+/// Returns (but **does not create**) path to **app-specific** data
+/// **subdirectory** for provided data type and subdirectory path.
 ///
-/// A result of `Ok` DOES NOT necessarily mean that the directory actually
-/// exists -- just that we were able to determine what the path SHOULD be.
+/// The `path` parameter should be a valid relative path separated by
+/// **forward slashes** (`/`).
 ///
-/// Different `AppDataType` variants are NOT GUARANTEED to return different
-/// directories (e.g. on Windows, everything except `UserCache` goes in
-/// `%APPDATA%`).
-pub fn get_app_dir_path(t: AppDataType, app: &AppInfo) -> AppDirsResult<PathBuf> {
+/// A result of `Ok` means that we determined where the data SHOULD go, but
+/// it DOES NOT guarantee that the directory actually exists. (See
+/// [`app_dir`](fn.app_dir.html).)
+pub fn get_app_dir(t: AppDataType, app: &AppInfo, path: &str) -> Result<PathBuf, AppDirsError> {
     if app.author.len() == 0 || app.name.len() == 0 {
         return Err(AppDirsError::InvalidAppData);
     }
-    get_app_data_root(t).map(|mut path| {
-        path.push(app.author.clone());
-        path.push(app.name.clone());
-        path
+    app_root(t, app).map(|mut root| {
+        for component in path.split("/").filter(|s| s.len() > 0) {
+            root.push(utils::sanitized(component));
+        }
+        root
     })
 }
 
-/// Gets path to root app data directory for the data type and app info
-/// provided.
+/// Creates (if necessary) and returns path to **app-specific** data
+/// directory for provided data type.
 ///
-/// "Root" in this case means that this function will return the top-level
-/// directory for all app data of type `t`. Generally, you should prefer to
-/// call `get_app_dir_path` with an instance of `AppInfo`.
+/// If the directory structure does not exist, this function will recursively
+/// create the full hierarchy. Therefore, a result of `Ok` guarantees that the
+/// returned path exists.
+pub fn app_root(t: AppDataType, app: &AppInfo) -> Result<PathBuf, AppDirsError> {
+    let path = try!(get_app_root(t, app));
+    match fs::create_dir_all(&path) {
+        Ok(..) => Ok(path),
+        Err(e) => Err(e.into()),
+    }
+}
+
+/// Returns (but **does not create**) path to **app-specific** data directory
+/// for provided data type.
 ///
-/// A result of `Ok` DOES NOT necessarily mean that the directory actually
-/// exists -- just that we were able to determine what the path SHOULD be.
+/// A result of `Ok` means that we determined where the data SHOULD go, but
+/// it DOES NOT guarantee that the directory actually exists. (See
+/// [`app_root`](fn.app_root.html).)
+pub fn get_app_root(t: AppDataType, app: &AppInfo) -> Result<PathBuf, AppDirsError> {
+    if app.author.len() == 0 || app.name.len() == 0 {
+        return Err(AppDirsError::InvalidAppData);
+    }
+    data_root(t).map(|mut root| {
+        if platform::USE_AUTHOR {
+            root.push(utils::sanitized(app.author));
+        }
+        root.push(utils::sanitized(app.name));
+        root
+    })
+}
+
+/// Creates (if necessary) and returns path to **top-level** data directory
+/// for provided data type.
 ///
-/// Different `AppDataType` variants are NOT GUARANTEED to return different
-/// directories (e.g. on Windows, everything except `UserCache` goes in
-/// `%APPDATA%`).
-pub fn get_app_data_root(t: AppDataType) -> AppDirsResult<PathBuf> {
+/// If the directory structure does not exist, this function will recursively
+/// create the full hierarchy. Therefore, a result of `Ok` guarantees that the
+/// returned path exists.
+pub fn data_root(t: AppDataType) -> Result<PathBuf, AppDirsError> {
+    let path = try!(platform::get_app_dir(t));
+    match fs::create_dir_all(&path) {
+        Ok(..) => Ok(path),
+        Err(e) => Err(e.into()),
+    }
+}
+
+/// Returns (but **does not create**) path to **top-level** data directory for
+/// provided data type.
+///
+/// A result of `Ok` means that we determined where the data SHOULD go, but
+/// it DOES NOT guarantee that the directory actually exists. (See
+/// [`data_root`](fn.data_root.html).)
+pub fn get_data_root(t: AppDataType) -> Result<PathBuf, AppDirsError> {
     platform::get_app_dir(t)
 }

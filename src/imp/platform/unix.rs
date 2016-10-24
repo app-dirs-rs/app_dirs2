@@ -4,7 +4,9 @@ use common::*;
 use std::path::PathBuf;
 use AppDataType::*;
 
-pub fn get_app_dir(t: AppDataType) -> AppDirsResult<PathBuf> {
+pub const USE_AUTHOR: bool = false;
+
+pub fn get_app_dir(t: AppDataType) -> Result<PathBuf, AppDirsError> {
     Xdg::new()
         .ok()
         .as_ref()

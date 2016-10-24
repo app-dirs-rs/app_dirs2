@@ -1,42 +1,38 @@
 use std;
 
-/// Data structure that holds information about your app.
+/// Struct that holds information about your app.
+/// 
+/// It's recommended to create a single `const` instance of `AppInfo`:
 ///
-/// This is used to pinpoint a specific location for your app's data on the
-/// file system, relative to where app data must be stored. Therefore, the
-/// attributes `name` and `author` MUST be valid directory names! It's HIGHLY
-/// recommended that you only use letters, numbers, spaces, hyphens, and
-/// underscores.
+/// ```
+/// use app_dirs::AppInfo;
+/// const APP_INFO: AppInfo = AppInfo{name: "Awesome App", author: "Dedicated Dev"};
+/// ```
+///
+/// # Caveats
+/// Functions in this library sanitize any characters that could be
+/// non-filename-safe from `name` and `author`. The resulting paths will be
+/// more human-readable if you stick to **letters, numbers, spaces, hyphens,
+/// and underscores** for both properties.
+///
+/// The `author` property is currently only used by Windows, as macOS and *nix
+/// specifications don't require it. Make sure your `name` string is unique!
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct AppInfo {
-    /// Filename-safe name of your app (e.g. "Hearthstone").
-    pub name: String,
-    /// Filename-safe author of your app (e.g. "Blizzard").
-    pub author: String,
-}
-
-impl AppInfo {
-    /// Convenience constructor to automatically convert e.g. static `&str`
-    /// into `String`.
-    pub fn new<A, B>(name: A, author: B) -> Self
-        where A: Into<String>,
-              B: Into<String>
-    {
-        AppInfo {
-            name: name.into(),
-            author: author.into(),
-        }
-    }
+    /// Name of your app (e.g. "Hearthstone").
+    pub name: &'static str,
+    /// Author of your app (e.g. "Blizzard").
+    pub author: &'static str,
 }
 
 /// Enum specifying the type of app data you want to store.
 ///
-/// Note that different platforms are not guaranteed or required
-/// to provide different locations for different variants. For example,
-/// Windows does not supported shared application data and does not
+/// **Different platforms are NOT guaranteed to distinguish between each data
+/// type.** Keep this in mind when choosing data file paths.
+///
+/// Example: Windows does not supported shared application data and does not
 /// distinguish between config and data. Therefore, on Windows, all variants
-/// except `UserCache` return the same path! Keep this in mind when choosing
-/// data file names and paths.
+/// except `UserCache` return the same path.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub enum AppDataType {
     /// User-specific app configuration data.
@@ -80,6 +76,3 @@ impl From<std::io::Error> for AppDirsError {
         AppDirsError::Io(e)
     }
 }
-
-/// Result type for any `app_dirs` operation.
-pub type AppDirsResult<T> = Result<T, AppDirsError>;
