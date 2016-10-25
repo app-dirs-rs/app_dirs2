@@ -13,7 +13,7 @@ use std;
 /// Functions in this library sanitize any characters that could be
 /// non-filename-safe from `name` and `author`. The resulting paths will be
 /// more human-readable if you stick to **letters, numbers, spaces, hyphens,
-/// and underscores** for both properties.
+/// underscores, and periods** for both properties.
 ///
 /// The `author` property is currently only used by Windows, as macOS and *nix
 /// specifications don't require it. Make sure your `name` string is unique!
