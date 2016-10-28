@@ -58,6 +58,9 @@ impl AppDataType {
     }
 }
 
+const ERR_NOT_SUPPORTED: &'static str = "App data directories not supported";
+const ERR_INVALID_APP_INFO: &'static str = "Invalid app name or author";
+
 /// Error type for any `app_dirs` operation.
 #[derive(Debug)]
 pub enum AppDirsError {
@@ -69,6 +72,36 @@ pub enum AppDirsError {
     /// App info given to this library was invalid (e.g. app name or author
     /// were empty).
     InvalidAppInfo,
+}
+
+impl std::fmt::Display for AppDirsError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
+        use AppDirsError::*;
+        match *self {
+            Io(ref e) => e.fmt(f),
+            NotSupported => f.write_str(ERR_NOT_SUPPORTED),
+            InvalidAppInfo => f.write_str(ERR_INVALID_APP_INFO),
+        }
+    }
+}
+
+impl std::error::Error for AppDirsError {
+    fn description(&self) -> &str {
+        use AppDirsError::*;
+        match *self {
+            Io(ref e) => e.description(),
+            NotSupported => "App data directories not supported",
+            InvalidAppInfo => "Invalid app name or author",
+        }
+    }
+    fn cause(&self) -> Option<&std::error::Error> {
+        use AppDirsError::*;
+        match *self {
+            Io(ref e) => Some(e),
+            NotSupported => None,
+            InvalidAppInfo => None,
+        }
+    }
 }
 
 impl From<std::io::Error> for AppDirsError {
