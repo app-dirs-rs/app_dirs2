@@ -68,7 +68,7 @@ pub enum AppDirsError {
     NotSupported,
     /// App info given to this library was invalid (e.g. app name or author
     /// were empty).
-    InvalidAppData,
+    InvalidAppInfo,
 }
 
 impl From<std::io::Error> for AppDirsError {
