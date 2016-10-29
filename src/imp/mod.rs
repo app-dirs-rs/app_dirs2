@@ -18,6 +18,11 @@ mod platform {
     mod windows;
     pub use self::windows::*;
 }
+#[cfg(not(any(windows, unix, target_os="macos",)))]
+mod platform {
+    mod unknown;
+    pub use self::unknown::*;
+}
 
 /// Creates (if necessary) and returns path to **app-specific** data
 /// **subdirectory** for provided data type and subdirectory path.
