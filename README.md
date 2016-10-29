@@ -13,5 +13,5 @@ https://docs.rs/app_dirs
 Add the following to your `Cargo.toml` under `[dependencies]`:
 
 ```toml
-app_dirs = "^1.0.1"
+app_dirs = "^1.1.1"
 ```
