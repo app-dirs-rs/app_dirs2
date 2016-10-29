@@ -5,7 +5,7 @@
 //! *"These values supersede the use of environment variables for this purpose.
 //! They are in turn superseded in Windows Vista and later by the KNOWNFOLDERID
 //! values."*
-//! - https://msdn.microsoft.com/en-us/library/windows/desktop/bb762494.aspx 
+//! - https://msdn.microsoft.com/en-us/library/windows/desktop/bb762494.aspx
 //!
 //! -_-
 
@@ -17,15 +17,15 @@
 extern crate ole32;
 extern crate shell32;
 extern crate winapi;
+use AppDataType::*;
 use common::*;
+use self::shell32::SHGetKnownFolderPath;
+use self::winapi::{GUID, PWSTR};
 use std::ffi::OsString;
 use std::os::windows::ffi::OsStringExt;
 use std::path::PathBuf;
 use std::ptr;
 use std::slice;
-use AppDataType::*;
-use self::shell32::SHGetKnownFolderPath;
-use self::winapi::{GUID, PWSTR};
 
 pub const USE_AUTHOR: bool = true;
 
@@ -70,12 +70,13 @@ fn get_folder_path(folder_id: &GUID) -> Result<OsString, AppDirsError> {
         // Wide C string to be allocated by SHGetKnownFolderPath.
         // We are responsible for freeing this!
         let mut raw_path: PWSTR = ptr::null_mut();
-        let result = SHGetKnownFolderPath(
-            folder_id, // reference to KNOWNFOLDERID
-            0, // no flags
-            ptr::null_mut(), // null handle -> current user
-            &mut raw_path // output location
-        );
+
+        // SHGetKnownFolderPath arguments:
+        // 1. reference to KNOWNFOLDERID
+        // 2. no flags
+        // 3. null handle -> current user
+        // 4. output location
+        let result = SHGetKnownFolderPath(folder_id, 0, ptr::null_mut(), &mut raw_path);
 
         // SHGetKnownFolderPath shouldn't ever fail, but if it does,
         // it will return a negative HRESULT.

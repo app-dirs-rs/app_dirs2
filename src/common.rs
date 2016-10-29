@@ -1,7 +1,7 @@
 use std;
 
 /// Struct that holds information about your app.
-/// 
+///
 /// It's recommended to create a single `const` instance of `AppInfo`:
 ///
 /// ```

@@ -17,7 +17,8 @@ pub fn sanitized(component: &str) -> String {
         let is_hyphen = c == '-';
         let is_underscore = c == '_';
         let is_period = c == '.' && i != 0; // Disallow accidentally hidden folders
-        let is_valid = is_letter || is_number || is_space || is_hyphen || is_underscore || is_period;
+        let is_valid = is_letter || is_number || is_space || is_hyphen || is_underscore ||
+                       is_period;
         if is_valid {
             buf.push(c);
         } else {

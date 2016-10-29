@@ -1,5 +1,5 @@
-use common::*;
 use AppDataType::*;
+use common::*;
 use std::env::home_dir;
 use std::path::{Component, PathBuf};
 
@@ -16,11 +16,11 @@ pub fn get_app_dir(t: AppDataType) -> Result<PathBuf, AppDirsError> {
             UserConfig | UserData | SharedConfig | SharedData => {
                 path.push("Library");
                 path.push("Application Support");
-            }
+            },
             UserCache => {
                 path.push("Library");
                 path.push("Caches");
-            }
+            },
         };
         path
     })

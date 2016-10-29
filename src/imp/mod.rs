@@ -1,7 +1,7 @@
-use common::{AppDirsError, AppDataType, AppInfo};
-use utils;
+use common::{AppDataType, AppDirsError, AppInfo};
 use std::fs;
 use std::path::PathBuf;
+use utils;
 
 #[cfg(target_os="macos")]
 mod platform {
