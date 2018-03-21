@@ -2,8 +2,8 @@
 //! *Put your app's data in the right place on every platform*
 //! # Usage
 //! ```
-//! extern crate app_dirs;
-//! use app_dirs::*;
+//! extern crate app_dirs2;
+//! use app_dirs2::*;
 //!
 //! const APP_INFO: AppInfo = AppInfo{name: "CoolApp", author: "SuperDev"};
 //!

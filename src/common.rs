@@ -5,7 +5,7 @@ use std;
 /// It's recommended to create a single `const` instance of `AppInfo`:
 ///
 /// ```
-/// use app_dirs::AppInfo;
+/// use app_dirs2::AppInfo;
 /// const APP_INFO: AppInfo = AppInfo{name: "Awesome App", author: "Dedicated Dev"};
 /// ```
 ///
