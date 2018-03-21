@@ -23,6 +23,11 @@ mod platform {
     mod unknown;
     pub use self::unknown::*;
 }
+#[cfg(target_os="redox")]
+mod platform {
+    mod redox;
+    pub use self::redox::*;
+}
 
 /// Creates (if necessary) and returns path to **app-specific** data
 /// **subdirectory** for provided data type and subdirectory path.
