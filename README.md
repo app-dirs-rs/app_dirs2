@@ -11,12 +11,12 @@ and that bugs stay fixed so we can have something to rely on.  I don't intend to
 rearchitecting or updating, but bugs *will* get fixed and builds *will* succeed.
 
 If you want to help maintain this, open an issue or such and we can work something out.
+This is a *community-maintained project*.  If you want to help maintain it, open an issue.
+Maintainers are expected to be polite, responsive and generally sane; the priority is to
+keep vital infrastructure working, so there's no one-person bottleneck for this project again.
 
 An alternative might be the [directories](https://crates.io/crates/directories) crate,
 but when we have existing code that relies on this, forking `app_dirs` is easier than porting.
-
-If you like it, feel free to drop a tip my the jar on [Patreon](https://www.patreon.com/icefox) or
-[Liberapay](https://liberapay.com/icefox).
 
 ## Documentation & examples
 https://docs.rs/app_dirs2

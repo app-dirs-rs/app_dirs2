@@ -1,11 +1,11 @@
 [package]
 name = "app_dirs2"
-version = "2.0.0"
+version = "2.0.2"
 authors = ["Andy Barron <AndrewLBarron@gmail.com>", "Simon Heath <icefoxen@gmail.com>"]
 
 description = "Put your app's data in the right place on every platform -- maintained fork."
 documentation = "https://docs.rs/app_dirs2"
-repository = "https://github.com/ggez/app-dirs-rs"
+repository = "https://github.com/app-dirs-rs/app-dirs-rs"
 readme = "README.md"
 keywords = ["application", "data", "storage", "location", "directory"]
 license = "MIT"
