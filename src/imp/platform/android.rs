@@ -2,8 +2,6 @@ use common::{AppDataType, AppDirsError};
 use std::path::PathBuf;
 use std::io::{Error, ErrorKind};
 
-pub const USE_AUTHOR: bool = false;
-
 impl From<jni::errors::Error> for AppDirsError {
     fn from(error: jni::errors::Error) -> Self {
         AppDirsError::Io(Error::new(ErrorKind::Other, error))
