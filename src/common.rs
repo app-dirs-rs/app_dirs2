@@ -94,7 +94,7 @@ impl std::error::Error for AppDirsError {
             InvalidAppInfo => "Invalid app name or author",
         }
     }
-    fn cause(&self) -> Option<&std::error::Error> {
+    fn cause(&self) -> Option<&(dyn std::error::Error)> {
         use AppDirsError::*;
         match *self {
             Io(ref e) => Some(e),
