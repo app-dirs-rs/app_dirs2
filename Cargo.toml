@@ -2,13 +2,14 @@
 name = "app_dirs2"
 version = "2.0.4"
 authors = ["Andy Barron <AndrewLBarron@gmail.com>", "Simon Heath <icefoxen@gmail.com>"]
-
-description = "Put your app's data in the right place on every platform -- maintained fork."
+categories = ["filesystem", "os"]
+description = "Put your app's data in the right place on every platform. Community-maintained project."
 documentation = "https://docs.rs/app_dirs2"
-repository = "https://github.com/app-dirs-rs/app_dirs2"
-readme = "README.md"
+homepage = "https://lib.rs/app_dirs2"
 keywords = ["application", "data", "storage", "location", "directory"]
 license = "MIT"
+readme = "README.md"
+repository = "https://github.com/app-dirs-rs/app_dirs2"
 
 [target.'cfg(all(unix, not(target_os="macos")))'.dependencies]
 xdg = "^2.0.0"
