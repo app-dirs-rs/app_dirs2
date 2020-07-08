@@ -1,7 +1,7 @@
-use common::{AppDataType, AppDirsError, AppInfo};
+use crate::common::{AppDataType, AppDirsError, AppInfo};
 use std::fs;
 use std::path::PathBuf;
-use utils;
+use crate::utils;
 
 #[cfg(target_os="macos")]
 mod platform {
@@ -44,7 +44,7 @@ mod platform {
 /// create the full hierarchy. Therefore, a result of `Ok` guarantees that the
 /// returned path exists.
 pub fn app_dir(t: AppDataType, app: &AppInfo, path: &str) -> Result<PathBuf, AppDirsError> {
-    let path = try!(get_app_dir(t, app, &path));
+    let path = get_app_dir(t, app, &path)?;
     match fs::create_dir_all(&path) {
         Ok(..) => Ok(path),
         Err(e) => Err(e.into()),
@@ -79,7 +79,7 @@ pub fn get_app_dir(t: AppDataType, app: &AppInfo, path: &str) -> Result<PathBuf,
 /// create the full hierarchy. Therefore, a result of `Ok` guarantees that the
 /// returned path exists.
 pub fn app_root(t: AppDataType, app: &AppInfo) -> Result<PathBuf, AppDirsError> {
-    let path = try!(get_app_root(t, app));
+    let path = get_app_root(t, app)?;
     match fs::create_dir_all(&path) {
         Ok(..) => Ok(path),
         Err(e) => Err(e.into()),
@@ -112,7 +112,7 @@ pub fn get_app_root(t: AppDataType, app: &AppInfo) -> Result<PathBuf, AppDirsErr
 /// create the full hierarchy. Therefore, a result of `Ok` guarantees that the
 /// returned path exists.
 pub fn data_root(t: AppDataType) -> Result<PathBuf, AppDirsError> {
-    let path = try!(platform::get_app_dir(t));
+    let path = platform::get_app_dir(t)?;
     match fs::create_dir_all(&path) {
         Ok(..) => Ok(path),
         Err(e) => Err(e.into()),

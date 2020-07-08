@@ -33,15 +33,15 @@
 //! }
 //! ```
 mod common;
-pub use common::*;
+pub use crate::common::*;
 mod imp;
-pub use imp::*;
+pub use crate::imp::*;
 mod utils;
-pub use utils::*;
+pub use crate::utils::*;
 
 #[cfg(test)]
 mod tests {
-    use AppDataType::*;
+    use crate::AppDataType::*;
     use super::*;
     #[test]
     fn it_works() {

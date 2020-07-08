@@ -50,7 +50,7 @@ pub enum AppDataType {
 impl AppDataType {
     /// Returns `true` for non-user-specific data types.
     pub fn is_shared(&self) -> bool {
-        use AppDataType::*;
+        use crate::AppDataType::*;
         match *self {
             SharedData | SharedConfig => true,
             _ => false,
@@ -75,10 +75,10 @@ pub enum AppDirsError {
 }
 
 impl std::fmt::Display for AppDirsError {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
-        use AppDirsError::*;
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+        use crate::AppDirsError::*;
         match *self {
-            Io(ref e) => e.fmt(f),
+            Io(ref e) => std::fmt::Display::fmt(e, f),
             NotSupported => f.write_str(ERR_NOT_SUPPORTED),
             InvalidAppInfo => f.write_str(ERR_INVALID_APP_INFO),
         }
@@ -86,16 +86,8 @@ impl std::fmt::Display for AppDirsError {
 }
 
 impl std::error::Error for AppDirsError {
-    fn description(&self) -> &str {
-        use AppDirsError::*;
-        match *self {
-            Io(ref e) => e.description(),
-            NotSupported => "App data directories not supported",
-            InvalidAppInfo => "Invalid app name or author",
-        }
-    }
-    fn cause(&self) -> Option<&std::error::Error> {
-        use AppDirsError::*;
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        use crate::AppDirsError::*;
         match *self {
             Io(ref e) => Some(e),
             NotSupported => None,

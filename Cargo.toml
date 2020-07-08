@@ -10,6 +10,7 @@ keywords = ["application", "data", "storage", "location", "directory"]
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/app-dirs-rs/app_dirs2"
+edition = "2018"
 
 [target.'cfg(all(unix, not(target_os="macos")))'.dependencies]
 xdg = "^2.0.0"
