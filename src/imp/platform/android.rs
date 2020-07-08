@@ -41,8 +41,8 @@ pub fn get_app_dir(t: AppDataType) -> Result<PathBuf, AppDirsError> {
         AppDataType::UserConfig => get_jni_app_dir(&activity, &env, "getDataDir")?,
         AppDataType::UserData => get_jni_app_dir(&activity, &env, "getFilesDir")?,
         AppDataType::UserCache => get_jni_app_dir(&activity, &env, "getCacheDir")?,
-        AppDataType::SharedData => get_jni_app_dir(&activity, &env, "getExternalFilesDir")?,
-        AppDataType::SharedConfig => get_jni_app_dir(&activity, &env, "getExternalFilesDir")?,
+        AppDataType::SharedData => get_jni_app_dir(&activity, &env, "getExternalFilesDir")?, // Deprecated in Android 11+
+        AppDataType::SharedConfig => get_jni_app_dir(&activity, &env, "getExternalFilesDir")?, // Deprecated in Android 11+
     };
 
     Ok(PathBuf::from(path_string))
