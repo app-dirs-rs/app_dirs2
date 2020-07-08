@@ -8,7 +8,7 @@ mod platform {
     mod macos;
     pub use self::macos::*;
 }
-#[cfg(all(unix, not(target_os="macos")))]
+#[cfg(all(unix, not(target_os="macos"), not(target_os="android")))]
 mod platform {
     mod unix;
     pub use self::unix::*;
@@ -27,6 +27,11 @@ mod platform {
 mod platform {
     mod redox;
     pub use self::redox::*;
+}
+#[cfg(target_os="android")]
+mod platform {
+    mod android;
+    pub use self::android::*;
 }
 
 /// Creates (if necessary) and returns path to **app-specific** data
