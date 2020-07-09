@@ -1,6 +1,6 @@
 extern crate xdg;
-use AppDataType::*;
-use common::*;
+use crate::AppDataType::*;
+use crate::common::*;
 use self::xdg::BaseDirectories as Xdg;
 use std::path::PathBuf;
 
