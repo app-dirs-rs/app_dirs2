@@ -1,5 +1,5 @@
-use AppDataType::*;
-use common::*;
+use crate::AppDataType::*;
+use crate::common::*;
 use std::env::home_dir;
 use std::path::{Component, PathBuf};
 

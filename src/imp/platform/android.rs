@@ -1,4 +1,4 @@
-use common::{AppDataType, AppDirsError};
+use crate::common::*;
 use std::path::PathBuf;
 use std::io::{Error, ErrorKind};
 

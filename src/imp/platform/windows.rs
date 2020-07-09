@@ -15,8 +15,8 @@
 // Credit for the above code goes to Connorcpu (https://github.com/Connorcpu).
 
 extern crate winapi;
-use AppDataType::*;
-use common::*;
+use crate::AppDataType::*;
+use crate::common::*;
 use self::winapi::shared::guiddef::GUID;
 use self::winapi::um::combaseapi::CoTaskMemFree;
 use self::winapi::um::shlobj::SHGetKnownFolderPath;
