@@ -64,7 +64,7 @@ pub fn get_app_dir(t: AppDataType, app: &AppInfo, path: &str) -> Result<PathBuf,
     if app.author.len() == 0 || app.name.len() == 0 {
         return Err(AppDirsError::InvalidAppInfo);
     }
-    app_root(t, app).map(|mut root| {
+    get_app_root(t, app).map(|mut root| {
         for component in path.split("/").filter(|s| s.len() > 0) {
             root.push(utils::sanitized(component));
         }
@@ -96,7 +96,7 @@ pub fn get_app_root(t: AppDataType, app: &AppInfo) -> Result<PathBuf, AppDirsErr
     if app.author.len() == 0 || app.name.len() == 0 {
         return Err(AppDirsError::InvalidAppInfo);
     }
-    data_root(t).map(|mut root| {
+    get_data_root(t).map(|mut root| {
         if platform::USE_AUTHOR {
             root.push(utils::sanitized(app.author));
         }
