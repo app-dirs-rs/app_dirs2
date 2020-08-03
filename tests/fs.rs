@@ -6,15 +6,15 @@ use std::sync;
 use app_dirs2::AppDataType;
 use test_case::test_case;
 
-/// This test suite checks the effects of the app_dirs2 crate on the file system.
-///
-/// The functions with the prefix get_ should not touch the file system.  The functions without the
-/// prefix should create the returned directory if it doesn’t exist.
-///
-/// As only the unix/XDG implementation supports changing the root configuration directory, we can
-/// only run this test suite on this platform.  As we use environment variables to set the
-/// configuration root, we have to make sure that the tests are run in sequence and don’t overlap,
-/// see the `ENV_MUTEX` mutex.
+// This test suite checks the effects of the app_dirs2 crate on the file system.
+//
+// The functions with the prefix get_ should not touch the file system.  The functions without the
+// prefix should create the returned directory if it doesn’t exist.
+//
+// As only the unix/XDG implementation supports changing the root configuration directory, we can
+// only run this test suite on this platform.  As we use environment variables to set the
+// configuration root, we have to make sure that the tests are run in sequence and don’t overlap,
+// see the `ENV_MUTEX` mutex.
 
 lazy_static::lazy_static! {
     // For test cases that depend on environment variables
