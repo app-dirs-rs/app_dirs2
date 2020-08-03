@@ -31,7 +31,7 @@ fn get_jni_app_dir(
     Ok(env.get_string(path_string)?.into())
 }
 
-pub fn get_app_dir(t: AppDataType) -> Result<PathBuf, AppDirsError> {
+pub fn get_app_dirs(t: AppDataType) -> Result<Vec<PathBuf>, AppDirsError> {
     let native_activity = ndk_glue::native_activity();
     let vm = unsafe { jni::JavaVM::from_raw(native_activity.vm()) }?;
     let env = vm.attach_current_thread()?;
@@ -45,5 +45,5 @@ pub fn get_app_dir(t: AppDataType) -> Result<PathBuf, AppDirsError> {
         AppDataType::SharedConfig => get_jni_app_dir(&activity, &env, "getExternalFilesDir")?, // Deprecated in Android 11+
     };
 
-    Ok(PathBuf::from(path_string))
+    Ok(vec![PathBuf::from(path_string)])
 }

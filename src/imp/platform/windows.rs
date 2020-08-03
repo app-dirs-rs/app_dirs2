@@ -29,13 +29,13 @@ use std::slice;
 
 pub const USE_AUTHOR: bool = true;
 
-pub fn get_app_dir(t: AppDataType) -> Result<PathBuf, AppDirsError> {
+pub fn get_app_dirs(t: AppDataType) -> Result<Vec<PathBuf>, AppDirsError> {
     let folder_id = match t {
         UserConfig => &FOLDERID_RoamingAppData,
         SharedConfig | SharedData => &FOLDERID_ProgramData,
         UserCache | UserData => &FOLDERID_LocalAppData,
     };
-    get_folder_path(folder_id).map(|os_str| os_str.into())
+    get_folder_path(folder_id).map(|os_str| vec![os_str.into()])
 }
 
 /// https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_RoamingAppData

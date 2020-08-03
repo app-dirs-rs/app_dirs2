@@ -4,6 +4,6 @@ use std::path::PathBuf;
 
 pub const USE_AUTHOR: bool = false;
 
-pub fn get_app_dir(_t: AppDataType) -> Result<PathBuf, AppDirsError> {
+pub fn get_app_dirs(_t: AppDataType) -> Result<Vec<PathBuf>, AppDirsError> {
     Err(AppDirsError::NotSupported)
 }

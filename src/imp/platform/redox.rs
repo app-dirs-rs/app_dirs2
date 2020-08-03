@@ -5,7 +5,7 @@ use std::path::{Component, PathBuf};
 
 pub const USE_AUTHOR: bool = false;
 
-pub fn get_app_dir(t: AppDataType) -> Result<PathBuf, AppDirsError> {
+pub fn get_app_dirs(t: AppDataType) -> Result<Vec<PathBuf>, AppDirsError> {
     let dir_base: Result<PathBuf, AppDirsError> = if t.is_shared() {
         Ok(Component::RootDir.as_ref().into())
     } else {
@@ -29,6 +29,6 @@ pub fn get_app_dir(t: AppDataType) -> Result<PathBuf, AppDirsError> {
                 path.push("share");
             }
         };
-        path
+        vec![path]
     })
 }

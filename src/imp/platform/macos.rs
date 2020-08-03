@@ -5,7 +5,7 @@ use std::path::{Component, Path, PathBuf};
 pub const USE_AUTHOR: bool = false;
 
 #[allow(deprecated)] // it's fine on macOS
-pub fn get_app_dir(t: AppDataType) -> Result<PathBuf, AppDirsError> {
+pub fn get_app_dirs(t: AppDataType) -> Result<Vec<PathBuf>, AppDirsError> {
     let dir_base: Result<PathBuf, AppDirsError> = if t.is_shared() {
         Ok(Path::new(&Component::RootDir).into())
     } else {
@@ -22,6 +22,6 @@ pub fn get_app_dir(t: AppDataType) -> Result<PathBuf, AppDirsError> {
                 path.push("Caches");
             },
         };
-        path
+        vec![path]
     })
 }
