@@ -1,6 +1,6 @@
 use crate::common::{AppDataType, AppDirsError, AppInfo};
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use crate::utils;
 
 #[cfg(target_os="macos")]
@@ -84,12 +84,12 @@ pub fn get_app_dir(t: AppDataType, app: &AppInfo, path: &str) -> Result<PathBuf,
 /// it DOES NOT guarantee that the directory actually exists. (See
 /// [`app_dir`](fn.app_dir.html).)
 pub fn get_app_dirs(t: AppDataType, app: &AppInfo, path: &str) -> Result<Vec<PathBuf>, AppDirsError> {
-    get_app_roots(t, app).map(|v| v.into_iter().map(|mut root| {
-        for component in path.split("/").filter(|s| s.len() > 0) {
-            root.push(utils::sanitized(component));
-        }
-        root
-    }).collect())
+    let mut subdir = PathBuf::new();
+    for component in path.split("/").filter(|s| s.len() > 0) {
+        subdir.push(utils::sanitized(component));
+    }
+
+    get_app_roots(t, app).map(|v| select_subdirs(v, subdir))
 }
 
 /// Creates (if necessary) and returns path to **app-specific** data
@@ -135,13 +135,14 @@ pub fn get_app_roots(t: AppDataType, app: &AppInfo) -> Result<Vec<PathBuf>, AppD
     if app.author.len() == 0 || app.name.len() == 0 {
         return Err(AppDirsError::InvalidAppInfo);
     }
-    get_data_roots(t).map(|v| v.into_iter().map(|mut root| {
-        if platform::USE_AUTHOR {
-            root.push(utils::sanitized(app.author));
-        }
-        root.push(utils::sanitized(app.name));
-        root
-    }).collect())
+
+    let mut subdir = PathBuf::new();
+    if platform::USE_AUTHOR {
+        subdir.push(utils::sanitized(app.author));
+    }
+    subdir.push(utils::sanitized(app.name));
+
+    get_data_roots(t).map(|v| select_subdirs(v, subdir))
 }
 
 /// Creates (if necessary) and returns path to **top-level** data directory
@@ -188,6 +189,30 @@ pub fn get_data_roots(t: AppDataType) -> Result<Vec<PathBuf>, AppDirsError> {
     if dirs.is_empty() {
         Err(AppDirsError::NotSupported)
     } else {
-        Ok(dirs)
+        Ok(select_dirs(dirs))
+    }
+}
+
+/// Select all valid subdirectories of the directories in the given vector.
+///
+/// If none of the subdirectories exist, this function returns all subdirectories.  Otherwise, only
+/// the existing subdirectories are returned.
+fn select_subdirs(mut vec: Vec<PathBuf>, subdir: impl AsRef<Path>) -> Vec<PathBuf> {
+    for path in vec.iter_mut() {
+        path.push(subdir.as_ref());
+    }
+    select_dirs(vec)
+}
+
+/// Select all valid directories from the given vector.
+///
+/// If the vector contains only one element or if none of the elements of the vector is a
+/// directory, it is returned without modification.  Otherwise, only the paths that point to an
+/// existing directory are returned.
+fn select_dirs(vec: Vec<PathBuf>) -> Vec<PathBuf> {
+    if vec.len() > 1 && vec.iter().any(|path| path.is_dir()) {
+        vec.into_iter().filter(|path| path.is_dir()).collect()
+    } else {
+        vec
     }
 }
