@@ -23,11 +23,6 @@ mod platform {
     mod unknown;
     pub use self::unknown::*;
 }
-#[cfg(target_os="redox")]
-mod platform {
-    mod redox;
-    pub use self::redox::*;
-}
 #[cfg(target_os="android")]
 mod platform {
     mod android;
