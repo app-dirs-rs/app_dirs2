@@ -6,21 +6,48 @@ use std::fs;
 use std::path;
 use std::sync;
 
-use app_dirs2::AppDataType;
+use app_dirs2::{AppDataType, AppInfo};
 use test_case::test_case;
+
+const APP_DATA_TYPES: &[AppDataType] = &[
+    AppDataType::UserCache,
+    AppDataType::UserConfig,
+    AppDataType::UserData,
+    AppDataType::SharedConfig,
+    AppDataType::SharedData,
+];
+
+const APP_INFO: AppInfo = AppInfo {
+    name: "app-name",
+    author: "app-author",
+};
+
+const SUBDIR: &'static str = "testdir";
 
 lazy_static::lazy_static! {
     // For test cases that depend on environment variables
     static ref ENV_MUTEX: sync::Mutex<()> = sync::Mutex::new(());
 }
 
+fn set_xdg_env(ty: AppDataType, value: impl AsRef<ffi::OsStr>) {
+    env::set_var(get_xdg_env_name(ty), value);
+}
+
+fn get_xdg_env_name(ty: AppDataType) -> ffi::OsString {
+    match ty {
+        AppDataType::UserCache => "XDG_CACHE_HOME",
+        AppDataType::UserConfig => "XDG_CONFIG_HOME",
+        AppDataType::UserData => "XDG_DATA_HOME",
+        AppDataType::SharedConfig => "XDG_CONFIG_DIRS",
+        AppDataType::SharedData => "XDG_DATA_DIRS",
+    }.into()
+}
+
 fn reset_env() {
     env::set_var("HOME", "");
-    env::set_var("XDG_CACHE_HOME", "");
-    env::set_var("XDG_CONFIG_HOME", "");
-    env::set_var("XDG_DATA_HOME", "");
-    env::set_var("XDG_DATA_DIRS", "");
-    env::set_var("XDG_CONFIG_DIRS", "");
+    for ty in APP_DATA_TYPES {
+        set_xdg_env(*ty, "");
+    }
 }
 
 #[test_case(AppDataType::UserCache, ".cache"; "user cache")]
@@ -42,190 +69,148 @@ fn test_home(ty: AppDataType, path: impl AsRef<path::Path>) {
         assert_eq!(dir.path().join(path.as_ref()), data_root);
     }
 
-    let app_info = app_dirs2::AppInfo {
-        name: "app-name",
-        author: "app-author",
-    };
+    let app_root = app_dirs2::get_app_root(ty, &APP_INFO).unwrap();
+    assert_eq!(data_root.join(APP_INFO.name), app_root);
 
-    let app_root = app_dirs2::get_app_root(ty, &app_info).unwrap();
-    assert_eq!(data_root.join(app_info.name), app_root);
-
-    let subdir = "testdir";
-    let app_dir = app_dirs2::get_app_dir(ty, &app_info, subdir).unwrap();
-    assert_eq!(app_root.join(subdir), app_dir);
+    let app_dir = app_dirs2::get_app_dir(ty, &APP_INFO, SUBDIR).unwrap();
+    assert_eq!(app_root.join(SUBDIR), app_dir);
 }
 
-#[test_case(AppDataType::UserCache, "XDG_CACHE_HOME"; "user cache")]
-#[test_case(AppDataType::UserConfig, "XDG_CONFIG_HOME"; "user config")]
-#[test_case(AppDataType::UserData, "XDG_DATA_HOME"; "user data")]
-#[test_case(AppDataType::SharedConfig, "XDG_CONFIG_DIRS"; "shared config")]
-#[test_case(AppDataType::SharedData, "XDG_DATA_DIRS"; "shared data")]
-fn test_xdg_dirs(ty: AppDataType, env_var: impl AsRef<ffi::OsStr>) {
+#[test_case(AppDataType::UserCache; "user cache")]
+#[test_case(AppDataType::UserConfig; "user config")]
+#[test_case(AppDataType::UserData; "user data")]
+#[test_case(AppDataType::SharedConfig; "shared config")]
+#[test_case(AppDataType::SharedData; "shared data")]
+fn test_xdg_dirs(ty: AppDataType) {
     let _env_guard = ENV_MUTEX.lock();
 
     let dir = tempfile::tempdir().unwrap();
     reset_env();
-    env::set_var(env_var.as_ref(), dir.path());
+    set_xdg_env(ty, dir.path());
 
     let data_root = app_dirs2::get_data_root(ty).unwrap();
     assert_eq!(dir.path(), data_root.as_path());
 
-    let app_info = app_dirs2::AppInfo {
-        name: "app-name",
-        author: "app-author",
-    };
+    let app_root = app_dirs2::get_app_root(ty, &APP_INFO).unwrap();
+    assert_eq!(data_root.join(APP_INFO.name), app_root);
 
-    let app_root = app_dirs2::get_app_root(ty, &app_info).unwrap();
-    assert_eq!(data_root.join(app_info.name), app_root);
-
-    let subdir = "testdir";
-    let app_dir = app_dirs2::get_app_dir(ty, &app_info, subdir).unwrap();
-    assert_eq!(app_root.join(subdir), app_dir);
+    let app_dir = app_dirs2::get_app_dir(ty, &APP_INFO, SUBDIR).unwrap();
+    assert_eq!(app_root.join(SUBDIR), app_dir);
 }
 
-#[test_case(AppDataType::UserCache, "XDG_CACHE_HOME"; "user cache")]
-#[test_case(AppDataType::UserConfig, "XDG_CONFIG_HOME"; "user config")]
-#[test_case(AppDataType::UserData, "XDG_DATA_HOME"; "user data")]
-#[test_case(AppDataType::SharedConfig, "XDG_CONFIG_DIRS"; "shared config")]
-#[test_case(AppDataType::SharedData, "XDG_DATA_DIRS"; "shared data")]
-fn test_home_and_xdg_dirs(ty: AppDataType, env_var: impl AsRef<ffi::OsStr>) {
+#[test_case(AppDataType::UserCache; "user cache")]
+#[test_case(AppDataType::UserConfig; "user config")]
+#[test_case(AppDataType::UserData; "user data")]
+#[test_case(AppDataType::SharedConfig; "shared config")]
+#[test_case(AppDataType::SharedData; "shared data")]
+fn test_home_and_xdg_dirs(ty: AppDataType) {
     let _env_guard = ENV_MUTEX.lock();
 
     let home_dir = tempfile::tempdir().unwrap();
     let xdg_dir = tempfile::tempdir().unwrap();
     reset_env();
     env::set_var("HOME", home_dir.path());
-    env::set_var(env_var.as_ref(), xdg_dir.path());
+    set_xdg_env(ty, xdg_dir.path());
 
     let data_root = app_dirs2::get_data_root(ty).unwrap();
     assert_eq!(xdg_dir.path(), data_root.as_path());
 
-    let app_info = app_dirs2::AppInfo {
-        name: "app-name",
-        author: "app-author",
-    };
+    let app_root = app_dirs2::get_app_root(ty, &APP_INFO).unwrap();
+    assert_eq!(data_root.join(APP_INFO.name), app_root);
 
-    let app_root = app_dirs2::get_app_root(ty, &app_info).unwrap();
-    assert_eq!(data_root.join(app_info.name), app_root);
-
-    let subdir = "testdir";
-    let app_dir = app_dirs2::get_app_dir(ty, &app_info, subdir).unwrap();
-    assert_eq!(app_root.join(subdir), app_dir);
+    let app_dir = app_dirs2::get_app_dir(ty, &APP_INFO, SUBDIR).unwrap();
+    assert_eq!(app_root.join(SUBDIR), app_dir);
 }
 
-#[test_case(AppDataType::UserCache, "XDG_CACHE_HOME"; "user cache")]
-#[test_case(AppDataType::UserConfig, "XDG_CONFIG_HOME"; "user config")]
-#[test_case(AppDataType::UserData, "XDG_DATA_HOME"; "user data")]
-fn test_multi_dir_user(ty: AppDataType, env_var: impl AsRef<ffi::OsStr>) {
+#[test_case(AppDataType::UserCache; "user cache")]
+#[test_case(AppDataType::UserConfig; "user config")]
+#[test_case(AppDataType::UserData; "user data")]
+fn test_multi_dir_user(ty: AppDataType) {
     let _env_guard = ENV_MUTEX.lock();
 
     let home_dir = tempfile::tempdir().unwrap();
     let xdg_dir = tempfile::tempdir().unwrap();
     reset_env();
     env::set_var("HOME", home_dir.path());
-    env::set_var(env_var.as_ref(), join_os_str(&[xdg_dir.path(), "test".as_ref()], ":"));
+    set_xdg_env(ty, join_os_str(&[xdg_dir.path(), "test".as_ref()], ":"));
 
     let data_root = app_dirs2::get_data_root(ty).unwrap();
     let data_roots = app_dirs2::get_data_roots(ty).unwrap();
     assert_eq!(vec![data_root], data_roots);
 
-    let app_info = app_dirs2::AppInfo {
-        name: "app-name",
-        author: "app-author",
-    };
-
-    let app_root = app_dirs2::get_app_root(ty, &app_info).unwrap();
-    let app_roots = app_dirs2::get_app_roots(ty, &app_info).unwrap();
+    let app_root = app_dirs2::get_app_root(ty, &APP_INFO).unwrap();
+    let app_roots = app_dirs2::get_app_roots(ty, &APP_INFO).unwrap();
     assert_eq!(vec![app_root], app_roots);
 
-    let subdir = "testdir";
-    let app_dir = app_dirs2::get_app_dir(ty, &app_info, subdir).unwrap();
-    let app_dirs = app_dirs2::get_app_dirs(ty, &app_info, subdir).unwrap();
+    let app_dir = app_dirs2::get_app_dir(ty, &APP_INFO, SUBDIR).unwrap();
+    let app_dirs = app_dirs2::get_app_dirs(ty, &APP_INFO, SUBDIR).unwrap();
     assert_eq!(vec![app_dir], app_dirs);
 }
 
-#[test_case(AppDataType::SharedConfig, "XDG_CONFIG_DIRS"; "shared config")]
-#[test_case(AppDataType::SharedData, "XDG_DATA_DIRS"; "shared data")]
-fn test_multi_dir_missing(ty: AppDataType, env_var: impl AsRef<ffi::OsStr>) {
+#[test_case(AppDataType::SharedConfig; "shared config")]
+#[test_case(AppDataType::SharedData; "shared data")]
+fn test_multi_dir_missing(ty: AppDataType) {
     let _env_guard = ENV_MUTEX.lock();
 
     let root_dir = tempfile::tempdir().unwrap();
     let dir1 = root_dir.path().join("dir1");
     let dir2 = root_dir.path().join("dir2");
     reset_env();
-    env::set_var(env_var.as_ref(), join_os_str(&[&dir1, &dir2], ":"));
+    set_xdg_env(ty, join_os_str(&[&dir1, &dir2], ":"));
 
     let data_roots = app_dirs2::get_data_roots(ty).unwrap();
     assert_eq!(vec![dir1.clone(), dir2.clone()], data_roots);
 
-    let app_info = app_dirs2::AppInfo {
-        name: "app-name",
-        author: "app-author",
-    };
+    let app_roots = app_dirs2::get_app_roots(ty, &APP_INFO).unwrap();
+    assert_eq!(data_roots.iter().map(|path| path.join(APP_INFO.name)).collect::<Vec<_>>(), app_roots);
 
-    let app_roots = app_dirs2::get_app_roots(ty, &app_info).unwrap();
-    assert_eq!(data_roots.iter().map(|path| path.join(app_info.name)).collect::<Vec<_>>(), app_roots);
-
-    let subdir = "testdir";
-    let app_dirs = app_dirs2::get_app_dirs(ty, &app_info, subdir).unwrap();
-    assert_eq!(app_roots.iter().map(|path| path.join(subdir)).collect::<Vec<_>>(), app_dirs);
+    let app_dirs = app_dirs2::get_app_dirs(ty, &APP_INFO, SUBDIR).unwrap();
+    assert_eq!(app_roots.iter().map(|path| path.join(SUBDIR)).collect::<Vec<_>>(), app_dirs);
 }
 
-#[test_case(AppDataType::SharedConfig, "XDG_CONFIG_DIRS"; "shared config")]
-#[test_case(AppDataType::SharedData, "XDG_DATA_DIRS"; "shared data")]
-fn test_multi_dir_existing_app_root(ty: AppDataType, env_var: impl AsRef<ffi::OsStr>) {
+#[test_case(AppDataType::SharedConfig; "shared config")]
+#[test_case(AppDataType::SharedData; "shared data")]
+fn test_multi_dir_existing_app_root(ty: AppDataType) {
     let _env_guard = ENV_MUTEX.lock();
 
     let root_dir = tempfile::tempdir().unwrap();
     let dir1 = root_dir.path().join("dir1");
     let dir2 = root_dir.path().join("dir2");
-    fs::create_dir_all(&dir2.join("app-name")).unwrap();
+    fs::create_dir_all(&dir2.join(APP_INFO.name)).unwrap();
     reset_env();
-    env::set_var(env_var.as_ref(), join_os_str(&[&dir1, &dir2], ":"));
+    set_xdg_env(ty, join_os_str(&[&dir1, &dir2], ":"));
 
     let data_roots = app_dirs2::get_data_roots(ty).unwrap();
     assert_eq!(vec![dir2.clone()], data_roots);
 
-    let app_info = app_dirs2::AppInfo {
-        name: "app-name",
-        author: "app-author",
-    };
+    let app_roots = app_dirs2::get_app_roots(ty, &APP_INFO).unwrap();
+    assert_eq!(vec![dir2.join(APP_INFO.name)], app_roots);
 
-    let app_roots = app_dirs2::get_app_roots(ty, &app_info).unwrap();
-    assert_eq!(vec![dir2.join(app_info.name)], app_roots);
-
-    let subdir = "testdir";
-    let app_dirs = app_dirs2::get_app_dirs(ty, &app_info, subdir).unwrap();
-    assert_eq!(vec![dir2.join(app_info.name).join(subdir)], app_dirs);
+    let app_dirs = app_dirs2::get_app_dirs(ty, &APP_INFO, SUBDIR).unwrap();
+    assert_eq!(vec![dir2.join(APP_INFO.name).join(SUBDIR)], app_dirs);
 }
 
-#[test_case(AppDataType::SharedConfig, "XDG_CONFIG_DIRS"; "shared config")]
-#[test_case(AppDataType::SharedData, "XDG_DATA_DIRS"; "shared data")]
-fn test_multi_dir_existing_app_dir(ty: AppDataType, env_var: impl AsRef<ffi::OsStr>) {
+#[test_case(AppDataType::SharedConfig; "shared config")]
+#[test_case(AppDataType::SharedData; "shared data")]
+fn test_multi_dir_existing_app_dir(ty: AppDataType) {
     let _env_guard = ENV_MUTEX.lock();
 
     let root_dir = tempfile::tempdir().unwrap();
     let dir1 = root_dir.path().join("dir1");
     let dir2 = root_dir.path().join("dir2");
-    fs::create_dir_all(&dir1.join("app-name").join("testdir")).unwrap();
-    fs::create_dir_all(&dir2.join("app-name")).unwrap();
+    fs::create_dir_all(&dir1.join(APP_INFO.name).join(SUBDIR)).unwrap();
+    fs::create_dir_all(&dir2.join(APP_INFO.name)).unwrap();
     reset_env();
-    env::set_var(env_var.as_ref(), join_os_str(&[&dir1, &dir2], ":"));
+    set_xdg_env(ty, join_os_str(&[&dir1, &dir2], ":"));
 
     let data_roots = app_dirs2::get_data_roots(ty).unwrap();
     assert_eq!(vec![dir1.clone(), dir2.clone()], data_roots);
 
-    let app_info = app_dirs2::AppInfo {
-        name: "app-name",
-        author: "app-author",
-    };
+    let app_roots = app_dirs2::get_app_roots(ty, &APP_INFO).unwrap();
+    assert_eq!(data_roots.iter().map(|path| path.join(APP_INFO.name)).collect::<Vec<_>>(), app_roots);
 
-    let app_roots = app_dirs2::get_app_roots(ty, &app_info).unwrap();
-    assert_eq!(data_roots.iter().map(|path| path.join(app_info.name)).collect::<Vec<_>>(), app_roots);
-
-    let subdir = "testdir";
-    let app_dirs = app_dirs2::get_app_dirs(ty, &app_info, subdir).unwrap();
-    assert_eq!(vec![dir1.join(app_info.name).join(subdir)], app_dirs);
+    let app_dirs = app_dirs2::get_app_dirs(ty, &APP_INFO, SUBDIR).unwrap();
+    assert_eq!(vec![dir1.join(APP_INFO.name).join(SUBDIR)], app_dirs);
 }
 
 fn join_os_str(
