@@ -1,4 +1,4 @@
-# app_dirs
+# app_dirs2
 
 *Put your app's data in the right place on every platform*
 
@@ -21,5 +21,7 @@ https://docs.rs/app_dirs2
 Add the following to your `Cargo.toml` under `[dependencies]`:
 
 ```toml
-app_dirs2 = "2"
+app_dirs = { package = "app_dirs2", version = "2" }
 ```
+
+The syntax with `package` allows you to keep the old name in the code (`use app_dirs::*`), so that it's a drop-in replacement.

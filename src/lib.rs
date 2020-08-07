@@ -1,9 +1,10 @@
 #![warn(missing_docs)]
 //! *Put your app's data in the right place on every platform*
+//!
 //! # Usage
-//! ```
-//! extern crate app_dirs2;
-//! use app_dirs2::*;
+//!
+//! ```rust
+//! use app_dirs2::*; // or app_dirs::* if you've used package alias in Cargo.toml
 //!
 //! const APP_INFO: AppInfo = AppInfo{name: "CoolApp", author: "SuperDev"};
 //!
@@ -32,6 +33,7 @@
 //!     // app_dir(AppDataType::UserCache, &APP_INFO, "cache/images")
 //! }
 //! ```
+
 mod common;
 pub use crate::common::*;
 mod imp;
