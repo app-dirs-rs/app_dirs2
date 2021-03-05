@@ -1,6 +1,6 @@
 [package]
 name = "app_dirs2"
-version = "2.3.1"
+version = "2.3.2"
 authors = ["Andy Barron <AndrewLBarron@gmail.com>", "Simon Heath <icefoxen@gmail.com>"]
 categories = ["filesystem", "os"]
 description = "Put your app's data in the right place on every platform. Community-maintained project."
@@ -17,7 +17,7 @@ xdg = "^2.0.0"
 
 [target.'cfg(target_os = "android")'.dependencies]
 jni = "0.19.0"
-ndk-glue = "0.2.0"
+ndk-glue = "0.3.0"
 
 [target.'cfg(windows)'.dependencies]
 winapi = { version = "0.3.8", features = ["shlobj", "combaseapi"] }
