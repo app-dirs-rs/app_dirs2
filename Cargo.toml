@@ -1,6 +1,6 @@
 [package]
 name = "app_dirs2"
-version = "2.3.3"
+version = "2.3.4"
 authors = ["Andy Barron <AndrewLBarron@gmail.com>", "Simon Heath <icefoxen@gmail.com>"]
 categories = ["filesystem", "os"]
 description = "Put your app's data in the right place on every platform. Community-maintained project."
@@ -26,3 +26,6 @@ winapi = { version = "0.3.8", features = ["shlobj", "combaseapi"] }
 lazy_static = "1.4"
 tempfile = "3"
 test-case = "1"
+
+[badges]
+maintenance = { status = "passively-maintained" }
