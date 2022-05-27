@@ -27,5 +27,13 @@ lazy_static = "1.4"
 tempfile = "3"
 test-case = "1"
 
+[target.'cfg(target_os = "android")'.dev-dependencies]
+ndk-glue = { version = "0.6", features = ["logger"] }
+log = "0.4"
+
 [badges]
 maintenance = { status = "passively-maintained" }
+
+[[example]]
+name = "android"
+crate-type = ["cdylib"]
