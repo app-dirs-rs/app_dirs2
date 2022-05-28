@@ -14,8 +14,18 @@ fn get_jni_app_dir(
     context: &jni::objects::JObject<'_>,
     env: &jni::JNIEnv<'_>,
     method: &str,
+    has_string_argument: bool,
 ) -> Result<String, AppDirsError> {
-    let dir = env.call_method(*context, method, "()Ljava/io/File;", &Vec::new()[..])?;
+    let dir = if has_string_argument {
+        env.call_method(
+            *context,
+            method,
+            "(Ljava/lang/String;)Ljava/io/File;",
+            &[jni::objects::JValue::Void],
+        )
+    } else {
+        env.call_method(*context, method, "()Ljava/io/File;", &[])
+    }?;
     let dir = match dir {
         jni::objects::JValue::Object(o) => o,
         _ => {
@@ -26,7 +36,7 @@ fn get_jni_app_dir(
         },
     };
 
-    let path_string = env.call_method(dir, "getPath", "()Ljava/lang/String;", &Vec::new()[..])?;
+    let path_string = env.call_method(dir, "getPath", "()Ljava/lang/String;", &[])?;
     let path_string = match path_string {
         jni::objects::JValue::Object(o) => jni::objects::JString::from(o),
         _ => {
@@ -47,11 +57,13 @@ pub fn get_app_dir(t: AppDataType) -> Result<PathBuf, AppDirsError> {
     let context = jni::objects::JObject::from(android_context.context().cast());
 
     let path_string = match t {
-        AppDataType::UserConfig => get_jni_app_dir(&context, &env, "getDataDir")?,
-        AppDataType::UserData => get_jni_app_dir(&context, &env, "getFilesDir")?,
-        AppDataType::UserCache => get_jni_app_dir(&context, &env, "getCacheDir")?,
-        AppDataType::SharedData => get_jni_app_dir(&context, &env, "getExternalFilesDir")?, // Deprecated in Android 11+
-        AppDataType::SharedConfig => get_jni_app_dir(&context, &env, "getExternalFilesDir")?, // Deprecated in Android 11+
+        AppDataType::UserConfig => get_jni_app_dir(&context, &env, "getDataDir", false)?,
+        AppDataType::UserData => get_jni_app_dir(&context, &env, "getFilesDir", false)?,
+        AppDataType::UserCache => get_jni_app_dir(&context, &env, "getCacheDir", false)?,
+        AppDataType::SharedData | AppDataType::SharedConfig => {
+            get_jni_app_dir(&context, &env, "getExternalFilesDir", true)?
+        },
+        // AppDataType::SharedCache => get_jni_app_dir(&context, &env, "getExternalCacheDir", false)?,
     };
 
     Ok(PathBuf::from(path_string))
