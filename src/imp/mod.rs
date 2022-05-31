@@ -1,14 +1,14 @@
 use crate::common::{AppDataType, AppDirsError, AppInfo};
+use crate::utils;
 use std::fs;
 use std::path::PathBuf;
-use crate::utils;
 
-#[cfg(target_os="macos")]
+#[cfg(target_os = "macos")]
 mod platform {
     mod macos;
     pub use self::macos::*;
 }
-#[cfg(all(unix, not(target_os="macos"), not(target_os="android")))]
+#[cfg(all(unix, not(target_os = "macos"), not(target_os = "android")))]
 mod platform {
     mod unix;
     pub use self::unix::*;
@@ -18,12 +18,12 @@ mod platform {
     mod windows;
     pub use self::windows::*;
 }
-#[cfg(not(any(windows, unix, target_os="macos",)))]
+#[cfg(not(any(windows, unix, target_os = "macos",)))]
 mod platform {
     mod unknown;
     pub use self::unknown::*;
 }
-#[cfg(target_os="android")]
+#[cfg(target_os = "android")]
 mod platform {
     mod android;
     pub use self::android::*;

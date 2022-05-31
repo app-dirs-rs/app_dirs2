@@ -43,8 +43,8 @@ pub use crate::utils::*;
 
 #[cfg(test)]
 mod tests {
-    use crate::AppDataType::*;
     use super::*;
+    use crate::AppDataType::*;
     #[test]
     fn it_works() {
         let info = AppInfo {
