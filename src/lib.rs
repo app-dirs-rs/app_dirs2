@@ -48,15 +48,15 @@ mod tests {
     #[test]
     fn it_works() {
         let info = AppInfo {
-            name: "Awesome App".into(),
-            author: "Dedicated Dev".into(),
+            name: "Awesome App",
+            author: "Dedicated Dev",
         };
         let path = "/.not-hidden/subfolder!/with?/uni.code/¡Olé!/";
         let types = [UserConfig, UserData, UserCache, SharedData, SharedConfig];
         for &t in types.iter() {
             println!("{:?} data root = {:?}", t, get_data_root(t));
             println!("{:?} app root = {:?}", t, get_app_root(t, &info));
-            println!("{:?} data dir = {:?}", t, get_app_dir(t, &info, &path));
+            println!("{:?} data dir = {:?}", t, get_app_dir(t, &info, path));
         }
     }
 }

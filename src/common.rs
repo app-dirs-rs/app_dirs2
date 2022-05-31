@@ -1,5 +1,3 @@
-use std;
-
 /// Struct that holds information about your app.
 ///
 /// It's recommended to create a single `const` instance of `AppInfo`:
@@ -51,15 +49,12 @@ impl AppDataType {
     /// Returns `true` for non-user-specific data types.
     pub fn is_shared(&self) -> bool {
         use crate::AppDataType::*;
-        match *self {
-            SharedData | SharedConfig => true,
-            _ => false,
-        }
+        matches!(self, SharedData | SharedConfig)
     }
 }
 
-const ERR_NOT_SUPPORTED: &'static str = "App data directories not supported";
-const ERR_INVALID_APP_INFO: &'static str = "Invalid app name or author";
+const ERR_NOT_SUPPORTED: &str = "App data directories not supported";
+const ERR_INVALID_APP_INFO: &str = "Invalid app name or author";
 
 /// Error type for any `app_dirs` operation.
 #[derive(Debug)]

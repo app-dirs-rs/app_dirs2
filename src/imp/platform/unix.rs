@@ -17,5 +17,5 @@ pub fn get_app_dir(t: AppDataType) -> Result<PathBuf, AppDirsError> {
             SharedData => x.get_data_dirs().into_iter().next(),
             SharedConfig => x.get_config_dirs().into_iter().next(),
         })
-        .ok_or_else(|| AppDirsError::NotSupported)
+        .ok_or(AppDirsError::NotSupported)
 }

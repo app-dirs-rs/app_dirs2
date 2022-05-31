@@ -1,3 +1,5 @@
+#![cfg(all(unix, not(target_os = "macos"), not(target_os = "android")))]
+
 use std::env;
 use std::io;
 use std::path;
@@ -37,7 +39,6 @@ fn set_root_dir(path: &path::Path) -> path::PathBuf {
 #[test_case(AppDataType::UserData; "user data")]
 #[test_case(AppDataType::SharedConfig; "shared config")]
 #[test_case(AppDataType::SharedData; "shared data")]
-#[cfg(all(unix, not(target_os = "macos"), not(target_os = "android")))]
 fn test_no_create(ty: AppDataType) -> io::Result<()> {
     let _env_guard = ENV_MUTEX.lock();
 
@@ -45,8 +46,8 @@ fn test_no_create(ty: AppDataType) -> io::Result<()> {
     let root_dir = set_root_dir(dir.path());
 
     let info = app_dirs2::AppInfo {
-        name: "test-app".into(),
-        author: "test-author".into(),
+        name: "test-app",
+        author: "test-author",
     };
 
     let data_root = app_dirs2::get_data_root(ty).unwrap();
@@ -84,7 +85,6 @@ fn test_no_create(ty: AppDataType) -> io::Result<()> {
 #[test_case(AppDataType::UserData; "user data")]
 #[test_case(AppDataType::SharedConfig; "shared config")]
 #[test_case(AppDataType::SharedData; "shared data")]
-#[cfg(all(unix, not(target_os = "macos"), not(target_os = "android")))]
 fn test_create(ty: AppDataType) -> io::Result<()> {
     let _env_guard = ENV_MUTEX.lock();
 
@@ -92,8 +92,8 @@ fn test_create(ty: AppDataType) -> io::Result<()> {
     let root_dir = set_root_dir(dir.path());
 
     let info = app_dirs2::AppInfo {
-        name: "test-app".into(),
-        author: "test-author".into(),
+        name: "test-app",
+        author: "test-author",
     };
 
     let data_root = app_dirs2::data_root(ty).unwrap();
