@@ -1,3 +1,5 @@
+#![cfg(target_os = "android")]
+
 use app_dirs2::*;
 use log::info;
 
