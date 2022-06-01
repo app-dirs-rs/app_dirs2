@@ -15,12 +15,12 @@
 // Credit for the above code goes to Connorcpu (https://github.com/Connorcpu).
 
 extern crate winapi;
-use crate::AppDataType::*;
-use crate::common::*;
 use self::winapi::shared::guiddef::GUID;
 use self::winapi::um::combaseapi::CoTaskMemFree;
 use self::winapi::um::shlobj::SHGetKnownFolderPath;
 use self::winapi::um::winnt::PWSTR;
+use crate::common::*;
+use crate::AppDataType::*;
 use std::ffi::OsString;
 use std::os::windows::ffi::OsStringExt;
 use std::path::PathBuf;
