@@ -1,0 +1,80 @@
+name: Rust
+
+on: [push, pull_request]
+
+jobs:
+  formatting:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+        profile: minimal
+        components: rustfmt
+    - name: Format
+      uses: actions-rs/cargo@v1
+      with:
+        command: fmt
+        args: --all -- --check
+
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+        profile: minimal
+        components: clippy
+    - name: Clippy
+      uses: actions-rs/cargo@v1
+      with:
+        command: clippy
+        args: --all --all-targets -- -Dwarnings
+
+  test:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+        profile: minimal
+    - name: Test all-targets
+      uses: actions-rs/cargo@v1
+      with:
+        command: test
+        args: --workspace --all-targets
+    - name: Test docs
+      uses: actions-rs/cargo@v1
+      with:
+        command: test
+        args: --workspace --doc
+
+  docs:
+    runs-on: ubuntu-latest
+    name: Build-test docs
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+        profile: minimal
+    - name: Document all crates
+      uses: actions-rs/cargo@v1
+      env:
+        RUSTDOCFLAGS: -Dwarnings
+      with:
+        command: doc
+        args: --all --all-features --no-deps --document-private-items
