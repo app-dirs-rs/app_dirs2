@@ -9,10 +9,10 @@
 pub fn sanitized(component: &str) -> String {
     let mut buf = String::with_capacity(component.len());
     for (i, c) in component.chars().enumerate() {
-        let is_lower = 'a' <= c && c <= 'z';
-        let is_upper = 'A' <= c && c <= 'Z';
+        let is_lower = ('a'..='z').contains(&c);
+        let is_upper = ('A'..='Z').contains(&c);
         let is_letter = is_upper || is_lower;
-        let is_number = '0' <= c && c <= '9';
+        let is_number = ('0'..='9').contains(&c);
         let is_space = c == ' ';
         let is_hyphen = c == '-';
         let is_underscore = c == '_';
