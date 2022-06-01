@@ -17,6 +17,8 @@
 //!     //   (e.g.: "/Users/Rusty/Library/Application Support/CoolApp")
 //!     //    *nix: "$HOME/.config/CoolApp" (or "$XDG_CONFIG_HOME/CoolApp", if defined)
 //!     //   (e.g.: "/home/rusty/.config/CoolApp")
+//!     // Android: "/data/user/<userid>/<app.package.name>/CoolApp"
+//!     //   (e.g.: "/data/user/0/org.super_dev.cool_app/CoolApp")
 //!
 //!     // How about nested cache data?
 //!     println!("{:?}", get_app_dir(AppDataType::UserCache, &APP_INFO, "cache/images"));
@@ -27,6 +29,8 @@
 //!     //    *nix: "$HOME/.cache/CoolApp/cache/images"
 //!     //          (or "$XDG_CACHE_HOME/CoolApp/cache/images", if defined)
 //!     //   (e.g.: "/home/rusty/.cache/CoolApp/cache/images")
+//!     // Android: "/data/user/<userid>/<app.package.name>/cache/CoolApp"
+//!     //   (e.g.: "/data/user/0/org.super_dev.cool_app/cache/CoolApp")
 //!
 //!     // Remove "get_" prefix to recursively create nonexistent directories:
 //!     // app_root(AppDataType::UserConfig, &APP_INFO)
