@@ -6,12 +6,11 @@ use std::path;
 use std::sync;
 
 use app_dirs2::AppDataType;
+use once_cell::sync::Lazy;
 use test_case::test_case;
 
-lazy_static::lazy_static! {
-    // For test cases that depend on environment variables
-    static ref ENV_MUTEX: sync::Mutex<()> = sync::Mutex::new(());
-}
+// For test cases that depend on environment variables
+static ENV_MUTEX: Lazy<sync::Mutex<()>> = Lazy::new(|| sync::Mutex::new(()));
 
 fn reset_env() {
     env::set_var("HOME", "");

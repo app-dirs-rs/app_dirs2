@@ -6,6 +6,7 @@ use std::path;
 use std::sync;
 
 use app_dirs2::AppDataType;
+use once_cell::sync::Lazy;
 use test_case::test_case;
 
 // This test suite checks the effects of the app_dirs2 crate on the file system.
@@ -18,10 +19,8 @@ use test_case::test_case;
 // configuration root, we have to make sure that the tests are run in sequence and don’t overlap,
 // see the `ENV_MUTEX` mutex.
 
-lazy_static::lazy_static! {
-    // For test cases that depend on environment variables
-    static ref ENV_MUTEX: sync::Mutex<()> = sync::Mutex::new(());
-}
+// For test cases that depend on environment variables
+static ENV_MUTEX: Lazy<sync::Mutex<()>> = Lazy::new(|| sync::Mutex::new(()));
 
 fn set_root_dir(path: &path::Path) -> path::PathBuf {
     let root = path.join("root");
