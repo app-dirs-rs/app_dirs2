@@ -3,12 +3,12 @@ use crate::utils;
 use std::fs;
 use std::path::PathBuf;
 
-#[cfg(target_os = "macos")]
+#[cfg(any(target_os = "macos", target_os = "ios"))]
 mod platform {
     mod macos;
     pub use self::macos::*;
 }
-#[cfg(all(unix, not(target_os = "macos"), not(target_os = "android")))]
+#[cfg(all(unix, not(target_os = "macos"), not(target_os = "ios"), not(target_os = "android")))]
 mod platform {
     mod unix;
     pub use self::unix::*;
@@ -18,7 +18,7 @@ mod platform {
     mod windows;
     pub use self::windows::*;
 }
-#[cfg(not(any(windows, unix, target_os = "macos",)))]
+#[cfg(not(any(windows, unix, target_os = "macos", target_os = "ios")))]
 mod platform {
     mod unknown;
     pub use self::unknown::*;
