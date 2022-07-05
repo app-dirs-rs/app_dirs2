@@ -28,12 +28,7 @@ fn get_jni_app_dir(
     }?;
     let dir = match dir {
         jni::objects::JValue::Object(o) => o,
-        _ => {
-            return Err(AppDirsError::Io(Error::new(
-                ErrorKind::Other,
-                "dir is not `JObject`",
-            )))
-        },
+        _ => return Err(AppDirsError::Io(Error::new(ErrorKind::Other, "dir is not `JObject`"))),
     };
 
     let path_string = env.call_method(dir, "getPath", "()Ljava/lang/String;", &[])?;
