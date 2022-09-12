@@ -2,11 +2,11 @@
 
 *Put your app's data in the right place on every platform*
 
-[![crates.io:app_dirs2](https://img.shields.io/crates/v/app_dirs2.svg?label=crates.io%3A%20app_dirs2)](https://crates.rs/crates/app_dirs2)
+[![crates.io:app_dirs2](https://img.shields.io/crates/v/app_dirs2.svg?label=crates.io%3A%20app_dirs2)](https://lib.rs/crates/app_dirs2)
 
 ## This is the up-to-date version of `app_dirs`
 
-The original [app_dirs](https://lib.rs/crates/app_dirs) crate is unmaintained and has seriously outdated dependencies. This is a fork that keeps the crate working and up-to-date.
+The original [app_dirs](https://lib.rs/crates/app_dirs) crate is deprecated and unmaintained. This is a drop-in-replacement fork that keeps the crate working and up-to-date.
 
 This is a *community-maintained project*, so if you find a bug or the crate is missing support for your platform, please help out.
 
@@ -24,4 +24,4 @@ Add the following to your `Cargo.toml` under `[dependencies]`:
 app_dirs = { package = "app_dirs2", version = "2.5" }
 ```
 
-The syntax with `package` allows you to keep the old name in the code (`use app_dirs::*`), so that it's a drop-in replacement.
+The syntax with `package` allows you to keep the old name in the code (`use app_dirs::*`), so you only need to change one line in `Cargo.toml`.
