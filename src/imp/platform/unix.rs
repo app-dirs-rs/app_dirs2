@@ -4,6 +4,9 @@ use crate::common::*;
 use crate::AppDataType::*;
 use std::path::PathBuf;
 
+// On Android we build this module to try XDG environment variables (#33), but
+// this constant is unused and triggers a compiler warning.
+#[cfg(not(target_os = "android"))]
 pub const USE_AUTHOR: bool = false;
 
 pub fn get_app_dir(t: AppDataType) -> Result<PathBuf, AppDirsError> {

@@ -6,7 +6,7 @@
 
 ## This is the up-to-date version of `app_dirs`
 
-The original [app_dirs](https://lib.rs/crates/app_dirs) crate is unmaintained and has seriously outdated dependencies. This is an fork that keeps the crate working and up-to-date.
+The original [app_dirs](https://lib.rs/crates/app_dirs) crate is unmaintained and has seriously outdated dependencies. This is a fork that keeps the crate working and up-to-date.
 
 This is a *community-maintained project*, so if you find a bug or the crate is missing support for your platform, please help out.
 
@@ -21,7 +21,7 @@ https://docs.rs/app_dirs2
 Add the following to your `Cargo.toml` under `[dependencies]`:
 
 ```toml
-app_dirs = { package = "app_dirs2", version = "2.3" }
+app_dirs = { package = "app_dirs2", version = "2.5" }
 ```
 
 The syntax with `package` allows you to keep the old name in the code (`use app_dirs::*`), so that it's a drop-in replacement.
