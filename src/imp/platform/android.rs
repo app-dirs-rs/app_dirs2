@@ -51,6 +51,17 @@ fn get_jni_app_dir(
 }
 
 pub fn get_app_dir(t: AppDataType) -> Result<PathBuf, AppDirsError> {
+    // Issue #33: Android apps run inside Termux do not have an Android JNI
+    // context, so the call to `ndk_context::android_context()` below will
+    // panic. However, Termux does provide the usual `$XDG_*` environment
+    // variables. So as a workaround, we check those variables first. "Regular"
+    // android apps will not have them, but will have a context.
+
+    let maybe_unix = super::unix::get_app_dir(t);
+    if maybe_unix.is_ok() {
+        return maybe_unix;
+    }
+
     let android_context = ndk_context::android_context();
     let vm = unsafe { jni::JavaVM::from_raw(android_context.vm().cast()) }?;
     let env = vm.attach_current_thread()?;

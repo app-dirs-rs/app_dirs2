@@ -8,7 +8,12 @@ mod platform {
     mod macos;
     pub use self::macos::*;
 }
-#[cfg(all(unix, not(target_os = "macos"), not(target_os = "ios"), not(target_os = "android")))]
+#[cfg(all(
+    unix,
+    not(target_os = "macos"),
+    not(target_os = "ios"),
+    not(target_os = "android")
+))]
 mod platform {
     mod unix;
     pub use self::unix::*;
@@ -25,7 +30,10 @@ mod platform {
 }
 #[cfg(target_os = "android")]
 mod platform {
+    // As per #33, Android tries the Unix path to avoid crashes for programs run
+    // inside Termux.
     mod android;
+    mod unix;
     pub use self::android::*;
 }
 
