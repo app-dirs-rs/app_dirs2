@@ -1,6 +1,6 @@
 [package]
 name = "app_dirs2"
-version = "2.5.3"
+version = "2.5.4"
 authors = ["Andy Barron <AndrewLBarron@gmail.com>", "Simon Heath <icefoxen@gmail.com>"]
 categories = ["filesystem", "os"]
 description = "Put your app's data in the right place on every platform. Community-maintained project."
