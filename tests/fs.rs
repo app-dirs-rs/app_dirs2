@@ -24,12 +24,12 @@ static ENV_MUTEX: Lazy<sync::Mutex<()>> = Lazy::new(|| sync::Mutex::new(()));
 
 fn set_root_dir(path: &path::Path) -> path::PathBuf {
     let root = path.join("root");
-    env::set_var("HOME", &root.join("home"));
+    env::set_var("HOME", root.join("home"));
     env::set_var("XDG_CACHE_HOME", "");
     env::set_var("XDG_CONFIG_HOME", "");
     env::set_var("XDG_DATA_HOME", "");
-    env::set_var("XDG_DATA_DIRS", &root.join("data"));
-    env::set_var("XDG_CONFIG_DIRS", &root.join("config"));
+    env::set_var("XDG_DATA_DIRS", root.join("data"));
+    env::set_var("XDG_CONFIG_DIRS", root.join("config"));
     root
 }
 
