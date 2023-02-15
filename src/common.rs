@@ -47,8 +47,9 @@ pub enum AppDataType {
 
 impl AppDataType {
     /// Returns `true` for non-user-specific data types.
+    #[must_use]
     pub fn is_shared(&self) -> bool {
-        use crate::AppDataType::*;
+        use crate::AppDataType::{SharedConfig, SharedData};
         matches!(self, SharedData | SharedConfig)
     }
 }

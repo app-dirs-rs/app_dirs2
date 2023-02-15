@@ -1,4 +1,4 @@
-use crate::common::*;
+use crate::common::{AppDataType, AppDirsError};
 use crate::AppDataType::*;
 use std::path::{Component, Path, PathBuf};
 
