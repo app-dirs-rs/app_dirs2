@@ -52,7 +52,7 @@ fn get_folder_path(folder_id: &GUID) -> Result<OsString, AppDirsError> {
         // 3. `None` handle -> current user
         //
         // Returns a PWSTR, which contains the path to requested folder.
-        match SHGetKnownFolderPath(folder_id, KNOWN_FOLDER_FLAG(0), None) {
+        match SHGetKnownFolderPath(folder_id, KNOWN_FOLDER_FLAG::default(), None) {
             Ok(raw_path) => {
                 // Ensures that the PWSTR is free when we leave this scope through
                 // normal execution or a thread panic.
